@@ -1,0 +1,4 @@
+function AMapWX(a){this.key=a.key;this.requestConfig={key:a.key,s:"rsx",platform:"WXJS",appname:a.key,sdkversion:"1.2.0",logversion:"2.0"};this.MeRequestConfig={key:a.key,serviceName:"https://restapi.amap.com/rest/me"}}
+AMapWX.prototype.getDrivingRoute=function(a){var b=Object.assign({},this.requestConfig);a.origin&&(b.origin=a.origin);a.destination&&(b.destination=a.destination);a.strategy&&(b.strategy=a.strategy);a.waypoints&&(b.waypoints=a.waypoints);a.avoidpolygons&&(b.avoidpolygons=a.avoidpolygons);a.avoidroad&&(b.avoidroad=a.avoidroad);wx.request({url:"https://restapi.amap.com/v3/direction/driving",data:b,method:"GET",header:{"content-type":"application/json"},success:function(c){c&&c.data&&c.data.route&&a.success({paths:c.data.route.paths,
+taxi_cost:c.data.route.taxi_cost||""})},fail:function(c){a.fail({errCode:"0",errMsg:c.errMsg||""})}})};
+module.exports.AMapWX=AMapWX;

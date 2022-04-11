@@ -1,0 +1,27 @@
+.mini-image {
+  position: relative;
+  width: inherit;
+  height: inherit;
+}
+.mini-image image {
+  display: block;
+  width: inherit;
+  height: inherit;
+}
+.mini-image.widthFix .image {
+  height: 0;
+}
+.mini-image.heightFix .image {
+  width: 0;
+}
+.mini-image .hidden {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+.mini-image-placeholder {
+  width: 2rpx;
+  height: 50rpx;
+  visibility: hidden;
+}

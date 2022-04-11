@@ -1,0 +1,29 @@
+<view class="mini-image {{mode}} {{containerClass}}" style="{{containerStyle}}">
+  <!--主图-->
+  <!--非渐进加载时直接显示，否则，等待缩略图先加载完成-->
+  <block wx:if="{{isImageVisible}}">
+    <image wx:if="{{!interlace || isThumbnailLoaded}}"
+           class="mini-image-main-image {{imageClass}} {{isImageLoaded?'visible':'hidden'}}"
+           src="{{imageSrc}}"
+           webp="{{true}}"
+           mode="{{mode}}"
+           lazy-load="{{lazyLoad}}"
+           show-menu-by-longpress="{{showMenuByLongPress}}"
+           style="{{imageStyle}}"
+           bind:error="handleImageError"
+           bind:load="handleImageLoad"></image>
+  </block>
+  <!--占位元素，当设置视口监听且外层容器无高度时使用-->
+  <view wx:elif="{{placeholder && (enterObserve||leaveObserve)}}"
+        class="mini-image-placeholder"></view>
+  <!--缩略图-->
+  <!--渐进加载时显示，当主图加载完成后销毁-->
+  <image wx:if="{{thumbnailSrc && !isImageLoaded}}"
+         class="mini-image-thumbnail"
+         src="{{thumbnailSrc}}"
+         webp="{{true}}"
+         mode="{{mode}}"
+         style="{{imageStyle}}"
+         bind:load="handleThumbnailLoad"
+         bind:error="handleThumbnailError"></image>
+</view>
