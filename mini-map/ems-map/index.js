@@ -1,18 +1,25 @@
 const amap = require("../ems-map/amap");
-const { markerConfig, mapKey } = require("./constant");
+const {
+  markerConfig,
+  mapKey,
+  carMarkerConfig,
+  carMarkerId,
+} = require("./constant");
 
 // 将路径分为两部分，便于染色处理
 // 第一部分是 起始点-途经点-当前位置
 // 第二部分是 当前位置-终点
 const points = {
   // 起始点
-  start: "120.177359,36.963235",
+  start: "120.11031,30.360453",
   // 终点
-  end: "120.255002,30.198588",
+  end: "120.160779,30.161771",
   // 途经点
-  waypoints: "117.387227,31.922465",
+  waypoints: "120.164898,30.33527;120.203004,30.246653",
   // 当前位置
-  current: "117.638941,31.699471",
+  current: "120.207353,30.240225",
+  // 上一个位置，用于绘制货车动画
+  prev: "120.203004,30.246653",
 };
 
 Component({
@@ -29,38 +36,18 @@ Component({
   },
   lifetimes: {
     attached() {
-      this.renderMarker();
       this.renderPath().then();
+      this.renderMarker();
     },
   },
   methods: {
-    renderMarker() {
-      const startPoint = points.start.split(",");
-      const endPoint = points.end.split(",");
-      const currentPint = points.current.split(",");
-      const markers = [
-        {
-          ...markerConfig,
-          id: 1,
-          latitude: startPoint[1],
-          longitude: startPoint[0],
-        },
-        {
-          ...markerConfig,
-          id: 2,
-          latitude: currentPint[1],
-          longitude: currentPint[0],
-        },
-        {
-          ...markerConfig,
-          id: 3,
-          latitude: endPoint[1],
-          longitude: endPoint[0],
-        },
-      ];
-      this.setData({ markers });
+    handleMapUpdate() {
+      if (this.data.includePoints.length > 0) {
+        this.renderCarMarker();
+      }
     },
-    getPoint({ start, end, waypoints }) {
+    // 获取路径点
+    getPath({ start, end, waypoints }) {
       return new Promise((resolve, reject) => {
         const mapObj = new amap.AMapWX({ key: mapKey });
         mapObj.getDrivingRoute({
@@ -89,13 +76,18 @@ Component({
         });
       });
     },
+    // 绘制路径
     async renderPath() {
-      const pointTraveled = await this.getPoint({
+      const pointTraveled = await this.getPath({
         start: points.start,
         end: points.current,
         waypoints: points.waypoints,
       });
-      const pointNotTraveled = await this.getPoint({
+      const pointForAnimation = await this.getPath({
+        start: points.prev,
+        end: points.current,
+      });
+      const pointNotTraveled = await this.getPath({
         start: points.current,
         end: points.end,
       });
@@ -111,7 +103,80 @@ Component({
           width: 6,
         },
       ];
-      this.setData({ polyline, includePoints: pointNotTraveled });
+      this.setData({ polyline, includePoints: pointForAnimation });
+    },
+    // 渲染图标
+    renderMarker() {
+      const startPoint = points.start.split(",");
+      const endPoint = points.end.split(",");
+      const currentPint = points.current.split(",");
+      const markers = [
+        {
+          ...markerConfig,
+          id: 1,
+          latitude: startPoint[1],
+          longitude: startPoint[0],
+        },
+        {
+          ...markerConfig,
+          id: 2,
+          latitude: currentPint[1],
+          longitude: currentPint[0],
+        },
+        {
+          ...markerConfig,
+          id: 3,
+          latitude: endPoint[1],
+          longitude: endPoint[0],
+        },
+      ];
+      this.setData({ markers });
+    },
+    // 绘制货车标记
+    renderCarMarker() {
+      // 绘制货车图标
+      const { markers } = this.data;
+      if (markers.find((item) => item.id === carMarkerId)) return;
+      const prevPint = points.prev.split(",");
+      const currentPint = points.current.split(",");
+      // 如果支持moveAlong则播放动画，如果不支持则直接在当前位置处显示货车标记
+      if (wx.canIUse("MapContext.moveAlong")) {
+        this.setData(
+          {
+            markers: [
+              ...markers,
+              {
+                id: carMarkerId,
+                ...carMarkerConfig,
+                latitude: prevPint[1],
+                longitude: prevPint[0],
+              },
+            ],
+          },
+          () => this.startAnimation()
+        );
+      } else {
+        this.setData({
+          markers: [
+            ...markers,
+            {
+              id: carMarkerId,
+              ...carMarkerConfig,
+              latitude: currentPint[1],
+              longitude: currentPint[0],
+            },
+          ],
+        });
+      }
+    },
+    // 开始路径动画
+    startAnimation() {
+      const mapContext = wx.createMapContext("map-element", this);
+      mapContext.moveAlong({
+        markerId: carMarkerId,
+        path: this.data.includePoints,
+        duration: 4000,
+      });
     },
   },
 });
