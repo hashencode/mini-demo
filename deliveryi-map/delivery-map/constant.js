@@ -1,5 +1,5 @@
 // 高德应用KEY
-export const mapKey = "YOUR_AMAP_KEY";
+export const mapKey = "7f0a6fdfb7d293d487f87239eba2813a";
 
 // 标记默认配置
 export const markerConfig = {

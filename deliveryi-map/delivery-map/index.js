@@ -1,4 +1,4 @@
-const amap = require("../ems-map/amap");
+const amap = require(".//amap");
 const {
   markerConfig,
   mapKey,

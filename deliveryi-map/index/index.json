@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "delivery-map": "../delivery-map/index"
+  }
+}

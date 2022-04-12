@@ -43,7 +43,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "2.23.4",
-  "appid": "",
+  "appid": "wx214e0b162bb5f589",
   "projectname": "mini-map",
   "debugOptions": {
     "hidedInDevtools": []
