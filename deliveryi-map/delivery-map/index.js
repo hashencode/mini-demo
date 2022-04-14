@@ -1,10 +1,12 @@
-const amap = require(".//amap");
-const {
+const amap = require("./amap");
+import {
   markerConfig,
   mapKey,
   carMarkerConfig,
   carMarkerId,
-} = require("./constant");
+  animationDuration,
+  visiblePathRange,
+} from "./constant";
 
 // 将路径分为两部分，便于染色处理
 // 第一部分是 起始点-途经点-当前位置
@@ -18,17 +20,15 @@ const points = {
   waypoints: "120.164898,30.33527;120.203004,30.246653",
   // 当前位置
   current: "120.207353,30.240225",
-  // 上一个位置，用于绘制货车动画
-  prev: "120.203004,30.246653",
 };
 
 Component({
   properties: {},
   data: {
     // 地图中心点
-    centerPoint: { longitude: 117.638941, latitude: 31.699471 },
+    centerPoint: { longitude: 120.207353, latitude: 30.240225 },
     // 当前在地图中需要被展示的点
-    includePoints: [],
+    animationPath: [],
     // 标注
     markers: [],
     // 路径图形
@@ -42,8 +42,11 @@ Component({
   },
   methods: {
     handleMapUpdate() {
-      if (this.data.includePoints.length > 0) {
-        this.renderCarMarker();
+      if (this.data.animationPath.length > 0) {
+        // 防止绘制的同时运行动画造成卡顿
+        setTimeout(() => {
+          this.renderCarMarker();
+        }, 1500);
       }
     },
     // 获取路径点
@@ -83,10 +86,6 @@ Component({
         end: points.current,
         waypoints: points.waypoints,
       });
-      const pointForAnimation = await this.getPath({
-        start: points.prev,
-        end: points.current,
-      });
       const pointNotTraveled = await this.getPath({
         start: points.current,
         end: points.end,
@@ -103,7 +102,14 @@ Component({
           width: 6,
         },
       ];
-      this.setData({ polyline, includePoints: pointForAnimation });
+      this.setData({
+        polyline,
+        animationPath: pointTraveled.slice(-10),
+        visiblePath: [
+          ...pointTraveled.slice(-visiblePathRange),
+          ...pointNotTraveled.slice(0, visiblePathRange),
+        ],
+      });
     },
     // 渲染图标
     renderMarker() {
@@ -132,15 +138,15 @@ Component({
       ];
       this.setData({ markers });
     },
-    // 绘制货车标记
+    // 绘制货车图标
     renderCarMarker() {
-      // 绘制货车图标
-      const { markers } = this.data;
+      const { markers, animationPath } = this.data;
       if (markers.find((item) => item.id === carMarkerId)) return;
-      const prevPint = points.prev.split(",");
+      const startPoint = animationPath[0];
       const currentPint = points.current.split(",");
       // 如果支持moveAlong则播放动画，如果不支持则直接在当前位置处显示货车标记
       if (wx.canIUse("MapContext.moveAlong")) {
+        const { longitude, latitude } = startPoint;
         this.setData(
           {
             markers: [
@@ -148,8 +154,8 @@ Component({
               {
                 id: carMarkerId,
                 ...carMarkerConfig,
-                latitude: prevPint[1],
-                longitude: prevPint[0],
+                latitude,
+                longitude,
               },
             ],
           },
@@ -171,11 +177,10 @@ Component({
     },
     // 开始路径动画
     startAnimation() {
-      const mapContext = wx.createMapContext("map-element", this);
-      mapContext.moveAlong({
+      wx.createMapContext("map-element", this).moveAlong({
         markerId: carMarkerId,
-        path: this.data.includePoints,
-        duration: 4000,
+        path: this.data.animationPath,
+        duration: animationDuration,
       });
     },
   },
