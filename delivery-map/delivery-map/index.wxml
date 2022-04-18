@@ -1,0 +1,18 @@
+<view class="map-container">
+    <map id="map-element"
+         class="map-element"
+         scale="12"
+         longitude="{{centerPoint.longitude}}"
+         latitude="{{centerPoint.latitude}}"
+         circles="{{circles}}"
+         markers="{{markers}}"
+         polyline="{{polyline}}"
+         include-points="{{visiblePath}}"
+         bind:updated="handleMapUpdate">
+        <cover-view slot="callout">
+            <cover-view marker-id="1"><cover-view class="map-marker">发货点</cover-view></cover-view>
+            <cover-view marker-id="2"><cover-view class="map-marker">当前点</cover-view></cover-view>
+            <cover-view marker-id="3"><cover-view class="map-marker">收货点</cover-view></cover-view>
+        </cover-view>
+    </map>
+</view>

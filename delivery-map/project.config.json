@@ -44,7 +44,7 @@
   "compileType": "miniprogram",
   "libVersion": "2.23.4",
   "appid": "wx214e0b162bb5f589",
-  "projectname": "mini-map",
+  "projectname": "delivery-map",
   "debugOptions": {
     "hidedInDevtools": []
   },

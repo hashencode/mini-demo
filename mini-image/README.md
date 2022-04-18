@@ -14,7 +14,9 @@
 
 1. 将库中`component/mini-image`路径下的 mini-image 组件拷贝至你的项目中
 
-2. 在 app.json 文件中全局引入 mini-image：
+2. 替换`YOUR_OSS_DOMAIN`成你的OSS域名，将`YOUR_OSS_IMAGE`替换成一张可访问的存储在OSS内的图片地址
+
+3. 在 app.json 文件中全局引入 mini-image：
    
    ```json
    {
@@ -24,7 +26,7 @@
    }
    ```
 
-3. 在 wxml 中使用 mini-image：
+4. 在 wxml 中使用 mini-image：
    
    ```html
    <mini-image src={{imageSrc}}></mini-image>

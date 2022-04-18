@@ -24,3 +24,9 @@ export const carMarkerConfig = {
 
 // 货车标记ID
 export const carMarkerId = 999;
+
+// 动画持续时间
+export const animationDuration = 2500;
+
+// 首次展示的路径长度，数值越大，展示的路径越长
+export const visiblePathRange = 10;

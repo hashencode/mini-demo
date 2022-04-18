@@ -36,7 +36,6 @@ export const defaultObserveOption = { top: 100, bottom: 100 };
 // 图床格式化字符串的前缀
 export const suffixStart = '?x-oss-process=image/';
 // 图床链接特征
-export const imageServerDomain = ['img1.dxycdn.com'];
+export const imageServerDomain = ['YOUR_OSS_DOMAIN'];
 // 用于测试网络是否断连的图片
-export const networkChecker =
-  'https://img1.dxycdn.com/2020/1009/261/2267636074190370443-2.png?x-oss-process=image/info';
+export const networkChecker = 'YOUR_OSS_IMAGE?x-oss-process=image/info';
