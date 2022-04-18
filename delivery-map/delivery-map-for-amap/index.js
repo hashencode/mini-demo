@@ -1,4 +1,4 @@
-const txmap = require("./txmap");
+const amap = require("./amap");
 import {
   markerConfig,
   mapKey,
@@ -13,13 +13,13 @@ import {
 // 第二部分是 当前位置-终点
 const points = {
   // 起始点
-  start: "30.360453,120.11031",
+  start: "120.11031,30.360453",
   // 终点
-  end: "30.161771,120.160779",
+  end: "120.160779,30.161771",
   // 途经点
-  waypoints: "30.33527,120.164898;30.246653,120.203004",
+  waypoints: "120.164898,30.33527;120.203004,30.246653",
   // 当前位置
-  current: "30.240225,120.207353",
+  current: "120.207353,30.240225",
 };
 
 Component({
@@ -52,29 +52,26 @@ Component({
     // 获取路径点
     getPath({ start, end, waypoints }) {
       return new Promise((resolve, reject) => {
-        const mapObj = new txmap({ key: mapKey });
-        mapObj.direction({
-          from: start,
-          to: end,
+        const mapObj = new amap.AMapWX({ key: mapKey });
+        mapObj.getDrivingRoute({
+          origin: start,
+          destination: end,
           waypoints,
           success: function (data) {
-            if (data.status !== 0) {
-              return wx.showToast({
-                title: "路径规划失败",
-                icon: "none",
-              });
+            const points = [];
+            if (data.paths && data.paths[0] && data.paths[0].steps) {
+              const steps = data.paths[0].steps;
+              for (let i = 0; i < steps.length; i++) {
+                const poLen = steps[i].polyline.split(";");
+                for (let j = 0; j < poLen.length; j++) {
+                  points.push({
+                    longitude: parseFloat(poLen[j].split(",")[0]),
+                    latitude: parseFloat(poLen[j].split(",")[1]),
+                  });
+                }
+              }
             }
-            const coors = data.result.routes[0].polyline;
-            const polyline = [];
-            //坐标解压
-            const kr = 1000000;
-            for (let i = 2; i < coors.length; i++) {
-              coors[i] = Number(coors[i - 2]) + Number(coors[i]) / kr;
-            }
-            for (let i = 0; i < coors.length; i += 2) {
-              polyline.push({ latitude: coors[i], longitude: coors[i + 1] })
-            }
-            resolve(polyline);
+            resolve(points);
           },
           fail: function () {
             reject([]);
@@ -123,20 +120,20 @@ Component({
         {
           ...markerConfig,
           id: 1,
-          latitude: startPoint[0],
-          longitude: startPoint[1],
+          latitude: startPoint[1],
+          longitude: startPoint[0],
         },
         {
           ...markerConfig,
           id: 2,
-          latitude: currentPint[0],
-          longitude: currentPint[1],
+          latitude: currentPint[1],
+          longitude: currentPint[0],
         },
         {
           ...markerConfig,
           id: 3,
-          latitude: endPoint[0],
-          longitude: endPoint[1],
+          latitude: endPoint[1],
+          longitude: endPoint[0],
         },
       ];
       this.setData({ markers });
@@ -171,8 +168,8 @@ Component({
             {
               id: carMarkerId,
               ...carMarkerConfig,
-              latitude: currentPint[0],
-              longitude: currentPint[1],
+              latitude: currentPint[1],
+              longitude: currentPint[0],
             },
           ],
         });

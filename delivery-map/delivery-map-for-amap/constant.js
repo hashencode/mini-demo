@@ -1,5 +1,5 @@
 // 高德应用KEY
-export const mapKey = "2SBBZ-2TFC3-TVZ3Q-YZL5O-EBZIF-5TB2R";
+export const mapKey = "7f0a6fdfb7d293d487f87239eba2813a";
 
 // 标记默认配置
 export const markerConfig = {

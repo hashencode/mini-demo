@@ -1,0 +1,17 @@
+.map-container {
+    width: 100vw;
+    height: 100vh;
+}
+
+.map-element {
+    width: 100vw;
+    height: 100vh;
+}
+
+.map-marker{
+    padding:12rpx 16rpx;
+    border-radius: 8rpx;
+    background: white;
+    opacity: .8;
+}
+
