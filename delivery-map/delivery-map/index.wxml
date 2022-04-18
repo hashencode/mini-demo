@@ -15,5 +15,4 @@
             <cover-view marker-id="3"><cover-view class="map-marker">收货点</cover-view></cover-view>
         </cover-view>
     </map>
-
 </view>
