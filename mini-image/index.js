@@ -2,6 +2,7 @@ import {
   defaultConfig,
   defaultMaxWidth,
   defaultObserveOption,
+  defaultPixelRatio,
   defaultWidth,
   imageServerDomain,
   networkChecker,
@@ -170,22 +171,18 @@ Component({
     },
     // 计算图片宽度
     calcImageWidth({ config, width, thumbnail = false }) {
-      const { maxWidth = defaultMaxWidth } = config;
-      let widthClone = 0;
-      // 如果传入了错误的宽度数值
-      if (!width || !+width) {
-        console.warn('mini-image: incorrect width passed in');
-        widthClone = defaultWidth;
-      } else {
-        widthClone = Math.floor(width);
-      }
+      const { maxWidth = defaultMaxWidth, pixelRatio = defaultPixelRatio } = config;
+      // 处理传入错误的宽度数值的情况
+      let widthClone = !width || !+width ? defaultWidth : width;
       // 如果是缩略图，则只取一半宽度
-      widthClone = thumbnail ? Math.floor(widthClone / 2) : widthClone;
+      widthClone = thumbnail ? widthClone / 2 : widthClone;
+      // 加入DPR因素
+      widthClone *= pixelRatio;
       // 图片的虚拟像素不得超过设备的实际像素
       if (widthClone > maxWidth) {
         return maxWidth;
       }
-      return widthClone;
+      return Math.floor(widthClone);
     },
     // 设置视口监听
     addViewportObserve() {

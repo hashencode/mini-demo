@@ -5,7 +5,7 @@
 export const qualityMap = {
   wifi: 100,
   '5g': 90,
-  '4g': 80,
+  '4g': 85,
   '3g': 70,
   '2g': 60,
   unknown: 60,
@@ -18,14 +18,17 @@ export const weakNetworkQuality = qualityMap['2g'];
 // 缩略图质量
 export const thumbnailQuality = 20;
 // 默认容器宽度（rpx）
-export const defaultWidth = 750;
+export const defaultWidth = 375;
 // 默认图片最大宽度
 export const defaultMaxWidth = 750;
+// 默认DPR
+export const defaultPixelRatio = 2;
 // 默认配置
 export const defaultConfig = {
   webpSupport: false,
   maxWidth: defaultMaxWidth,
   quality: defaultQuality,
+  pixelRatio: defaultPixelRatio,
 };
 // 默认视口监听配置
 export const defaultObserveOption = { top: 100, bottom: 100 };

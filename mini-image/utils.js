@@ -1,6 +1,7 @@
 import {
   defaultConfig,
   defaultMaxWidth,
+  defaultPixelRatio,
   defaultQuality,
   qualityMap,
   supportedWidths,
@@ -61,6 +62,14 @@ const getQuality = () => {
   });
 };
 
+// 获取DPR
+const getDPR = info => {
+  const { pixelRatio = defaultPixelRatio } = info;
+  if (pixelRatio < 1) return 1;
+  if (pixelRatio > 3) return 3;
+  return pixelRatio;
+};
+
 // 创建图片配置信息
 export function setImageConfig() {
   return new Promise(resolve => {
@@ -69,12 +78,14 @@ export function setImageConfig() {
       success: async info => {
         const maxWidth = getMaxWidth(info);
         const webpSupport = getWebpSupport(info);
+        const pixelRatio = getDPR(info);
         const quality = await getQuality();
         // 更新全局的图片设置
         this.globalData.imageConfig = {
           webpSupport,
           maxWidth,
           quality,
+          pixelRatio,
         };
         resolve(true);
       },
