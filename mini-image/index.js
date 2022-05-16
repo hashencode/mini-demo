@@ -252,9 +252,9 @@ Component({
     },
     // 错误处理
     fixImageLoadError() {
-      // 如果检查次数大于5次时，不再检查网络
+      // 如果检查次数大于2次时，不再检查网络
       const { networkCheckCount } = this.data;
-      if (networkCheckCount >= 5) return this.removeNetworkCheckTimer();
+      if (networkCheckCount >= 2) return this.removeNetworkCheckTimer();
       this.setData({
         networkCheckCount: networkCheckCount + 1,
       });
@@ -262,7 +262,7 @@ Component({
       wx.request({
         url: networkChecker,
         method: 'head',
-        timeout: 5000,
+        timeout: 3000,
         success: () => {
           // 如果请求成功，则网络连接正常
           this.removeNetworkCheckTimer();
