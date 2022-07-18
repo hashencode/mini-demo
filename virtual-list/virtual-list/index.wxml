@@ -1,0 +1,22 @@
+<wxs module='utils'>
+    var includes = function(arr, value){
+        if(arr) return arr.indexOf(value) > -1
+    }
+    module.exports.includes = includes;
+</wxs>
+<view class="virtual-list">
+    <view wx:for="{{listData}}"
+          wx:for-index="pageNum"
+          id="virtual-list-page-{{pageNum}}"
+          wx:key="pageNum">
+        <block wx:if="{{utils.includes(pagesInViewport,pageNum)}}">
+            <view class="virtual-list-item"
+                  wx:for="{{item}}"
+                  wx:key="id" style="{{listItemHeight?listItemHeight+'px':''}}">
+                <text>{{item.id}}</text>
+            </view>
+        </block>
+        <view wx:else class="virtual-list-placeholder" style="height:{{pageHeightArray[pageNum]}}px"></view>
+    </view>
+    <view class="virtual-list-loading"></view>
+</view>

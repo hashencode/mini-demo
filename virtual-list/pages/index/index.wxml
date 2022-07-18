@@ -1,0 +1,3 @@
+<virtual-list listData="{{listData}}"
+              bind:onReachBottom="fetchNextPage">
+</virtual-list>

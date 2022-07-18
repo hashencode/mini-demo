@@ -1,0 +1,9 @@
+.virtual-list-item {
+  text-align: center;
+  height: 100rpx;
+}
+.virtual-list-loading {
+  display: block;
+  min-width: 1rpx;
+  min-height: 1rpx;
+}
